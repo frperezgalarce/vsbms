@@ -36,7 +36,7 @@ import scipy.stats as st
 from scipy import optimize
 import warnings
 from tempfile import mkdtemp
-from pymc3.step_methods import smc
+#from pymc3.step_methods import smc
 #import seaborn
 from sklearn import preprocessing
 from pymc3.variational.callbacks import CheckParametersConvergence
@@ -318,19 +318,6 @@ def fitBayesianModel(Bayesian_Model, yTrain, method = 1, n_ = 3000, MAP=True, ch
             trace = trace_#pm.backends.base.merge_traces(traces) #
             map = 0
         return trace, model, map
-
-
-    if(method == 9):
-        #n_chains = 3
-        print('------- SMC--------')
-        with Bayesian_Model as model:
-            # powell, BFGS, Newton-CG, 'trust-ncg', 'trust-krylov', 'trust-exact',
-            map =0 # pm.find_MAP(model = model, method = 'Newton-CG')
-            step = pm.SMC()
-            trace = pm.sample(n_ ,step =step, chain= chains, njobs=jobs, callbacks=[CheckParametersConvergence()])
-            #print(model.marginal_likelihood)
-        return trace, model, map
-
 
 
 def predictionNN(X_test, neural_network, ann_input, X_train, approx):

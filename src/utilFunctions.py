@@ -37,7 +37,7 @@ from itertools import cycle
 import scipy.stats as st
 import warnings
 from tempfile import mkdtemp
-from pymc3.step_methods import smc
+#from pymc3.step_methods import smc
 #import seaborn
 from sklearn import preprocessing
 from pymc3.variational.callbacks import CheckParametersConvergence

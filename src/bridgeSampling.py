@@ -16,7 +16,7 @@ from scipy import dot
 from scipy.linalg import cholesky as chol
 import scipy.stats as st
 from tempfile import mkdtemp
-from pymc3.step_methods import smc
+#from pymc3.step_methods import smc
 from sklearn import preprocessing
 from pymc3.variational.callbacks import CheckParametersConvergence
 import timeit

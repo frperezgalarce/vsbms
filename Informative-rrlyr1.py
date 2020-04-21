@@ -56,7 +56,6 @@ DataPriors['newlabel'] = (DataPriors['Amplitude'] >= 0.2) & (DataPriors['Amplitu
 #lc_train = dataTrain#[dataTrain['label']=='ClassA']
 del DataPriors['label']
 DataPriors.rename(columns={'newlabel':'label'}, inplace = True)
-print(DataPriors.columns)
 ax = sns.scatterplot(x="Amplitude", y="PeriodLS", data=DataPriors, hue="label", alpha=0.1,)
 plt.ylabel('Period')
 plt.ylim(0,6)
