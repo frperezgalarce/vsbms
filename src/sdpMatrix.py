@@ -15,7 +15,7 @@ def _getPu(A, W=None):
     Aret[W > 0] = np.array(W)[W > 0]
     return np.matrix(Aret)
 
-def nearPD(A, nit=10):
+def nearPD(A, nit=100):
     n = A.shape[0]
     W = np.identity(n)
 # W is the matrix used for the norm (assumed to be Identity matrix here)

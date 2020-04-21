@@ -44,69 +44,13 @@ import timeit
 from pymc3.variational.callbacks import CheckParametersConvergence
 import sys
 sys.setrecursionlimit(5000)
-# In[ ]:
-
-# def LogisticRegressionBinomial(DataTrain, DataTest, var_label1=0, var_label2 = 1, classRef = 'RRLYR', biasedSplit = False, onetoOne = True, className = 'Class', PCA = True, **kwargs):
-#
-#     if onetoOne == True: # and biasedSplit == False:
-#         DataTrain = DataTrain[(DataTrain[className] == var_label1) | (DataTrain[className] == var_label2)]
-#         DataTrain['label'] = 1*(DataTrain[className] == var_label1)
-#         del DataTrain[className]
-#
-#         DataTest = DataTest[(DataTest[className] == var_label1) | (DataTest[className] == var_label2)]
-#         DataTest['label'] = 1*(DataTest[className] == var_label1)
-#         del DataTest[className]
-#     else:
-#         print('binary classification of', var_label1)
-#         #Data = OGLE
-#         DataTrain['label'] = 1*(DataTrain[className] == classRef)
-#         del DataTrain[className]
-#
-#         DataTest['label'] = 1*(DataTest[className] == classRef)
-#         del DataTest[className]
-#
-#     if PCA == True:
-#         List = ['PC'+str(i) for i in range((DataTrain.shape[1])-1)]
-#     else:
-#         List = list(DataTrain.columns)
-#         List.remove('label')
-#
-#     priorsDict = {}
-#     priorsDict['Intercept'] = pm.Normal.dist(mu=0, sd=1)
-#     for j in List:
-#         priorsDict[j] =  pm.Normal.dist(mu=0, sd=1)
-#
-#
-#     myList = '+'.join(map(str, List))
-#     label = 'label~'
-#     print(myList)
-#     function = ''.join((label, myList))
-#
-#     with pm.Model() as logistic_model:
-#         pm.glm.GLM.from_formula(function, DataTrain, priors= priorsDict, family=pm.glm.families.Binomial())
-#         return logistic_model, DataTrain, DataTest
-
+from scipy.linalg import lstsq
+from statsmodels.tsa.ar_model import AR
 
 def LogisticRegressionBinomialPrior(DataTrain, var_label1=0, var_label2 = 1, biasedSplit = False, priors = 'normal', onetoOne = True, className = 'Class', PCA = True,**kwargs):
-    '''
-    if onetoOne == True:
-        DataTrain = DataTrain[(DataTrain[className] == var_label1) | (DataTrain[className] == var_label2)]
-        DataTrain['label'] = 1*(DataTrain[className] == var_label1)
-        del DataTrain[className]
-
-        DataTest = DataTest[(DataTest[className] == var_label1) | (DataTest[className] == var_label2)]
-        DataTest['label'] = 1*(DataTest[className] == var_label1)
-        del DataTest[className]
-    '''
-    #print(DataTrain)
-
     DataTrain['label']  = 1*(DataTrain[className] == 'ClassA')
     Y_train = DataTrain['label']
     del DataTrain[className]
-    #del DataTest[className]
-
-
-    print(Y_train)
     if PCA == True:
         List = ['PC'+str(i) for i in range(1, DataTrain.shape[1])]
     else:
@@ -115,16 +59,9 @@ def LogisticRegressionBinomialPrior(DataTrain, var_label1=0, var_label2 = 1, bia
             List.remove('label')
         except:
             print('__')
-
-
-    #
-
-    print(List)
     myList = '+'.join(map(str, List))
     label = 'label~'
     function = ''.join((label, myList))
-    print(function)
-
     priorsDict = {}
     vague = False
     if vague == True:
@@ -284,8 +221,6 @@ def construct_nn(Data_train, className, n_hidden = 8, activation = 'tanh', typeo
 
 def fitBayesianModel(Bayesian_Model, yTrain, method = 1, n_ = 3000, MAP=True, chains =1, jobs =1, star = 'rrlyr', classifier ='RL', PCA = False):
     'This method fits bayesian model using different algorithms, option two only is able to work with NN'
-#    get_ipython().magic('%time')
-
     print('chains: ', chains)
     print('jobs: ', jobs)
     if(method == 1):
@@ -295,16 +230,10 @@ def fitBayesianModel(Bayesian_Model, yTrain, method = 1, n_ = 3000, MAP=True, ch
                 map = pm.find_MAP()
                 inference = pm.SGFS(batch_size = 50, total_size = len(yTrain))
                 trace = pm.sample(start = map, draws = n_, step = inference)
-                #inference = pm.ADVI()
-                #approx = pm.fit(method=inference,start=start, callbacks=[CheckParametersConvergence(diff='absolute')])
-                #approx = pm.fit(method='advi',start =map, callbacks=[CheckParametersConvergence(diff='absolute')])
             else:
                 map = pm.find_MAP()
                 inference = pm.SGFS(batch_size = 50, total_size = len(yTrain))
-                #approx = pm.fit(method=inference, callbacks=[CheckParametersConvergence()])
-
                 trace = pm.sample(draws = n_, step = inference)
-        #trace2 = approx.sample(1000)
         return trace, inference, model, map
 
     if(method == 2):
@@ -332,48 +261,34 @@ def fitBayesianModel(Bayesian_Model, yTrain, method = 1, n_ = 3000, MAP=True, ch
             map = pm.find_MAP()
             approx = pm.fit(n_, start = map, method='svgd', inf_kwargs=dict(n_particles=100),
                          obj_optimizer=pm.sgd(learning_rate=0.01))
-
-
-
-
         return  approx, model, map
 
     if(method == 4):
-        #n_chains = 3
-        #test_folder = mkdtemp(prefix='SMC_TEST')
         print('------- Slice Sampling--------')
         with Bayesian_Model as model:
-            map = pm.find_MAP()
-            # instantiate sampler
+            map = 0#pm.find_MAP()
             step = pm.Slice()
-            # draw 5000 posterior samples
-            trace = pm.sample(n_ , step=step, start=map, njobs=jobs)
+            trace = pm.sample(n_ , step=step, njobs=jobs)
         return trace, model, map
 
     if(method == 5):
-        #n_chains = 2
         print('------- HamiltonianMC--------')
         with Bayesian_Model as model:
-            map = pm.find_MAP()
+            #map = pm.find_MAP()
             step = pm.HamiltonianMC()
-            trace = pm.sample(n_ , start = map, chain= chains, njobs = jobs, step=step)
+            trace = pm.sample(n_ , chain= chains, tune = 2000, njobs = jobs, step=step, init=None)
         return trace, model, map
     if(method == 6):
-        #n_chains = 3
         print('------- Default--------')
         with Bayesian_Model as model:
-            map = pm.find_MAP()
+            map = 0#pm.find_MAP()
             trace = pm.sample(n_ , chain= chains, njobs=jobs,  callbacks=[CheckParametersConvergence()])
         return trace, model, map
 
     if(method == 7):
-        #n_chains = 3
         print('------- Metropolis--------')
         with Bayesian_Model as model:
-            # fmin_powell, optimize.basinhopping, fmin_BFGS, Newton-CG, 'trust-ncg', 'trust-krylov', 'trust-exact',
-            #map = pm.find_MAP()
             map = 0
-            #map = pm.find_MAP()
             step = pm.Metropolis()
             trace = pm.sample(n_ , step =step, chain= chains, njobs=jobs, callbacks=[CheckParametersConvergence()], tune =1000, step_size = 100)
             pm.traceplot(trace)
@@ -384,21 +299,33 @@ def fitBayesianModel(Bayesian_Model, yTrain, method = 1, n_ = 3000, MAP=True, ch
         return trace, model, map
 
     if(method == 8):
-        #n_chains = 3
         print('------- NUTS--------')
+
         with Bayesian_Model as model:
-            # powell, BFGS, Newton-CG, 'trust-ncg', 'trust-krylov', 'trust-exact',
-            map = pm.find_MAP(model = model, method = 'Newton-CG')
-            step = pm.NUTS()
-            trace = pm.sample(n_ ,step =step, start=map, chain= chains, njobs=jobs, callbacks=[CheckParametersConvergence()])
+            stds = np.ones(model.ndim)
+            for _ in range(5):
+                args = {'is_cov': True}
+                trace = pm.sample(500, tune=1000,chains = 1, init='advi+adapt_diag_grad', nuts_kwargs=args)
+                samples = [model.dict_to_array(p) for p in trace]
+                stds = np.array(samples).std(axis=0)
+            traces = []
+            for i in range(1):
+                step = pm.NUTS(scaling=stds ** 2, is_cov=True, target_accept=0.8) #
+                start = trace[-10 * i]
+
+                trace_ = pm.sample(n_ , cores = 4, step=step, tune=1000, chain= chains, njobs=1, init='advi+adapt_diag_grad',start=start, callbacks=[CheckParametersConvergence()])
+                #traces.append(trace_)
+            trace = trace_#pm.backends.base.merge_traces(traces) #
+            map = 0
         return trace, model, map
+
 
     if(method == 9):
         #n_chains = 3
         print('------- SMC--------')
         with Bayesian_Model as model:
             # powell, BFGS, Newton-CG, 'trust-ncg', 'trust-krylov', 'trust-exact',
-            map = pm.find_MAP(model = model, method = 'Newton-CG')
+            map =0 # pm.find_MAP(model = model, method = 'Newton-CG')
             step = pm.SMC()
             trace = pm.sample(n_ ,step =step, chain= chains, njobs=jobs, callbacks=[CheckParametersConvergence()])
             #print(model.marginal_likelihood)
@@ -415,6 +342,54 @@ def predictionNN(X_test, neural_network, ann_input, X_train, approx):
     sample_proba = theano.function([x, n], _sample_proba)
     pred = sample_proba(X_test, 500).mean(0) > 0.5
     return pred
+
+
+def spectrum0_ar(x):
+    """Port of spectrum0.ar from coda::spectrum0.ar"""
+    z = np.arange(1, len(x)+1)
+    z = z[:, np.newaxis]**[0, 1]
+    p, res, rnk, s = lstsq(z, x)
+    residuals = x - np.matmul(z, p)
+
+    if residuals.std() == 0:
+        spec = order = 0
+    else:
+        ar_out = AR(x).fit(ic='aic', trend='c')
+        order = ar_out.k_ar
+        spec = np.var(ar_out.resid)/(1 - np.sum(ar_out.params[1:]))**2
+
+    return spec, order
+
+def error_measures(logml):
+    """Port of the error_measures.R in bridgesampling
+    https://github.com/quentingronau/bridgesampling/blob/master/R/error_measures.R
+    """
+    ml = np.exp(logml['logml'])
+    g_p = np.exp(logml['q12'])
+    g_g = np.exp(logml['q22'])
+    priorTimesLik_p = np.exp(logml['q11'])
+    priorTimesLik_g = np.exp(logml['q21'])
+    p_p = priorTimesLik_p/ml
+    p_g = priorTimesLik_g/ml
+
+    N1 = len(p_p)
+    N2 = len(g_g)
+    s1 = N1/(N1 + N2)
+    s2 = N2/(N1 + N2)
+
+    f1 = p_g/(s1*p_g + s2*g_g)
+    f2 = g_p/(s1*p_p + s2*g_p)
+    rho_f2, _ = spectrum0_ar(f2)
+
+    term1 = 1/N2 * np.var( f1 ) / np.mean( f1 )**2
+    term2 = rho_f2/N1 * np.var( f2 ) / np.mean( f2 )**2
+
+    re2 = term1 + term2
+
+    # convert to coefficient of variation (assumes that bridge estimate is unbiased)
+    cv = np.sqrt(re2)
+    print('The percentage errors of the estimation is: ', cv*100)
+    return dict(re2 = re2, cv = cv)
 
 
 def analysisLogisticRegression(var1 = 0, var2 = 3, range_components = [1, 40, 5], method = 4, size_Sample = 2000):

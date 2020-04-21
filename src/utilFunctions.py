@@ -12,7 +12,7 @@ import pandas as pd
 import sklearn
 import numpy as np
 import matplotlib.pyplot as plt
-#import seaborn as sns
+import seaborn as sns
 from warnings import filterwarnings
 import  sklearn.linear_model as linearModel
 filterwarnings('ignore')
@@ -127,7 +127,7 @@ def kernelGaussiano(X, mean, sigma=1):
             col = col + 1
     return pd.DataFrame(phi)
 
-def kernelPolinomial(X, p):
+def Polinomial(X, p):
     phi = np.ones((X.shape[0],p*(X.shape[1])))
     col = 0
     X = (X-X.mean())/X.std()
@@ -178,6 +178,15 @@ def logistic_function_(z):
     pred = 1./(1.+np.exp(-z))
     #print(pred)
     return pred
+
+
+def plot_q(logml0):
+    _, ax=plt.subplots(1,1,figsize=(8,5))
+    for dist in ['q11', 'q12', 'q21', 'q22']:
+            sns.distplot(logml0[dist], ax=ax, label=dist, bins=20)
+    plt.legend();
+    plt.show()
+
 
 def surface_plot(X,Y,Z,**kwargs):
     """ WRITE DOCUMENTATION """
