@@ -16,7 +16,7 @@ import seaborn as sns
 from warnings import filterwarnings
 import  sklearn.linear_model as linearModel
 filterwarnings('ignore')
-#sns.set_style('white')
+
 from sklearn import datasets
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
@@ -37,8 +37,6 @@ from itertools import cycle
 import scipy.stats as st
 import warnings
 from tempfile import mkdtemp
-#from pymc3.step_methods import smc
-#import seaborn
 from sklearn import preprocessing
 from pymc3.variational.callbacks import CheckParametersConvergence
 import timeit
@@ -52,7 +50,6 @@ def Initialize(survey = 'OGLE', sepColumns_=' ', sepHeader_= ' ', maxSample = 50
     path = 'FATS/'
     if survey == 'OGLE':
         print('Running OGLE')
-        #Data = readFileFats(path+'FATS_OGLE.dat', formatFile ='.dat', sepColumns= sepColumns_, sepHeader= sepHeader_)
         Data = readFileFats(path+'OGLE_FATS_12022019.csv', formatFile ='.csv', sepColumns= sepColumns_, sepHeader= sepHeader_)
         print(Data.head())
         ID = 'ID'
@@ -134,27 +131,16 @@ def Polinomial(X, p):
     for i in range(1, p+1):
         for k in range(0, X.shape[1]):
             for j in range(0, X.shape[0]):
-                #print('power', str(i), 'row: ',str(j),' column: ', str(i*k +i), 'data: ', X.iloc[j,k], 'result: ', np.power(X.iloc[j,k],i))
                 try:
                     phi[j,col] = np.power(X.iloc[j,k],i)
-                    #print(np.power(X.iloc[j,k],i))
                 except:
                     phi[j,col] = np.power(X[j,k],i)
-                    #print(np.power(X[j,k],i))
-                #print(phi[j ,col])
             col = col + 1
     ret = pd.DataFrame(phi, columns = ['col'+str(i) for i in range(p*X.shape[1])]).round(3)
-    #print(ret.head())
     return ret
 
 def preprocess(Data, delete_noVariation = False, delete_correlation = False):
-    #del Data['class_name']
-    #del Data['ogle_id']
     Xm = Data.copy()
-    #delete_noVariation = True
-    #delete_correlation = True
-    #delete_outlier = False
-
     if(delete_noVariation == True):
         del Xm['Freq2_harmonics_rel_phase_0']
         del Xm['Freq3_harmonics_rel_phase_0']
@@ -176,7 +162,6 @@ def preprocess(Data, delete_noVariation = False, delete_correlation = False):
 
 def logistic_function_(z):
     pred = 1./(1.+np.exp(-z))
-    #print(pred)
     return pred
 
 
@@ -215,10 +200,7 @@ def surface_plot(X,Y,Z,**kwargs):
     plt.close()
 
 def get_z(data, trace, model, burn_in = 1000):
-
-    #ppc = pm.sample_ppc(trace=trace, samples = 100,size=100, model = model)
     r =  np.mean(trace.get_values('Intercept', burn = burn_in, combine = False)[0])
-    #r = np.mean(np.asarray(ppc['Intercept']))
     try:
         del data['label']
     except:
@@ -226,7 +208,6 @@ def get_z(data, trace, model, burn_in = 1000):
     for i in range(data.shape[1]):
         it = data.columns[i]
         values = np.mean(trace.get_values(it, burn = burn_in, combine = False)[0])
-        #values = np.mean(np.asarray(ppc[it]))
         r = np.round(r + np.outer(data.loc[:,it], values),5)
     return r
 
@@ -286,8 +267,6 @@ def DimReduction(Xm, ym, components, label=1, typeNet = 'bernoulli'):
         fig, ax = plt.subplots()
         ax.scatter(Xm[ym==0, 0], Xm[ym==0, 1], label='Class 0')
         ax.scatter(Xm[ym==1, 0], Xm[ym==1, 1], color='r', label='Class 1')
-        #sns.despine();
-	#ax.legend()
         ax.set(xlabel='X', ylabel='Y', title='Toy binary classification data set');
         plt.shoow()
     return Xm, ym
@@ -316,7 +295,6 @@ def Define_TrainSet(Data, name_class_col = 'Class', id_col = 'ID',plot = False,
 
     Data[name_class_col] = pd.Categorical(Data[name_class_col])
     classes_Data = Data[name_class_col].unique()
-    #Data['class_name'] = Data.class_name.cat.codes
     print('Running Define TrainSet')
     print(Data.shape)
 
@@ -463,8 +441,6 @@ def KFold(dataTrain, labelTrain, dataTest, labelTest, n_split_test, n_split_trai
     for train_index, test_index in skf.split(dataTrain, labelTrain):
         X_train, X_test = dataTrain.iloc[train_index,:], dataTrain.iloc[test_index,:]
         y_train, y_test = labelTrain.iloc[train_index], labelTrain.iloc[test_index]
-        #print('Train shape: ', X_train.shape)
-        #print('Test shape: ', X_test.shape)
         clf.fit(X_train, y_train)
         prediction_freq = clf.predict(X_test)
         acc_kfold.append(accuracy_score(y_test, prediction_freq, normalize=True))
@@ -481,8 +457,6 @@ def KFold(dataTrain, labelTrain, dataTest, labelTest, n_split_test, n_split_trai
     for train_index, test_index in skf.split(dataTest, labelTest):
         X_train, X_test = dataTest.iloc[train_index,:], dataTest.iloc[test_index,:]
         y_train, y_test = labelTest.iloc[train_index], labelTest.iloc[test_index]
-        #print('Train shape: ', X_train.shape)
-        #print('Test shape: ', X_test.shape)
         prediction_freq = clf.predict(X_test)
         print('Accuracy: ', accuracy_score(y_test, prediction_freq, normalize=True))
         print('F1-score: ', f1_score(y_test, prediction_freq, pos_label = 'ClassA'))
@@ -495,15 +469,12 @@ def comparativePlotAcc(Test, Train, classStar = 'rrlyr', clf = "Random Forest",n
         bin_lims = np.linspace(np.min(Test),1,num_bin+1)
         bin_centers = 0.5*(bin_lims[:-1]+bin_lims[1:])
         bin_widths = bin_lims[1:]-bin_lims[:-1]
-        ##computing the histograms
         if binslim == True:
             hist1, _ = np.histogram(np.asarray(Test), bins=bin_lims)
             hist2, _ = np.histogram(np.asarray(Train), bins=bin_lims)
         else:
             hist1, _ = np.histogram(np.asarray(Test))
             hist2, _ = np.histogram(np.asarray(Train))
-
-        ##normalizing
         if normalized == True:
             hist1 = hist1/np.max(hist1)
             hist2 = hist2/np.max(hist2)

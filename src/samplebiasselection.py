@@ -35,13 +35,6 @@ import utilFunctions as ut          # it has different methods to handle and plo
 import BayesianModels as bm # it has methods to build and train bayesian model (Logistic Regression and Neural Nets)
 import experiments as exp
 
-# In[3]:
-
-#Data, ID, Class_col, Classes = ut.Initialize(survey='GAIA', sepColumns_=',', sepHeader_=',')
-
-#Data[Class_col].value_counts()
-
-#Data.columns
 
 def sampleBiasSelection(Data, name = 'rrlyrae', **kwargs):
 
@@ -78,9 +71,6 @@ def sampleBiasSelection(Data, name = 'rrlyrae', **kwargs):
     Data['e'] = np.exp(-factor)
     Data['u'] = np.random.uniform(0, 1, Data.shape[0])
 
-    #print(Data['e'])
-    #print(factor)
-    #print(Data['u'])
     BiasSelection = True
     threshold = 0.8
 
@@ -124,10 +114,6 @@ def plot(train, test, title='RRLYRAE', survey = 'OGLE'):
     plt.savefig('Results/plots/'+title+survey+'2.png')
     plt.clf()
 
-#Data_test.Pred.hist()
-#Data_train.Pred.hist()
-
-#sets up the axis and gets histogram data
 
 def export(train, test, name='RRLYRAE', survey = 'OGLE'):
     train.to_csv('data/BIASEDFATS/Train2_'+survey+'_'+name+'.csv')

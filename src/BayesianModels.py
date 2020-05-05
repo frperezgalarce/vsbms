@@ -16,10 +16,8 @@ import pandas as pd
 import sklearn
 import numpy as np
 import matplotlib.pyplot as plt
-#import seaborn as sns
 from warnings import filterwarnings
 filterwarnings('ignore')
-#sns.set_style('white')
 from sklearn import datasets
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
@@ -36,8 +34,6 @@ import scipy.stats as st
 from scipy import optimize
 import warnings
 from tempfile import mkdtemp
-#from pymc3.step_methods import smc
-#import seaborn
 from sklearn import preprocessing
 from pymc3.variational.callbacks import CheckParametersConvergence
 import timeit
@@ -109,9 +105,6 @@ def construct_nn(Data_train, className, n_hidden = 8, activation = 'tanh', typeo
     'xm = complete dataset only is used for defining the structure... replace it'
 
     print('shape: ', Data_train.shape)
-
-    #Data_train = #Data_train[(Data_train[className] == kwargs['class_1']) | (Data_train[className] == kwargs['class_2'])]
-    #Data_train['label'] = 1*(Data_train[className] == kwargs['class_1'])
     Data_train[className] = Data_train[className].map({'class_1': 1, 'class_2': 0})
     Y_train = Data_train[className]
     del Data_train[className]
