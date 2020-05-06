@@ -17,6 +17,8 @@ from sklearn.decomposition import PCA
 from sklearn.metrics.pairwise import polynomial_kernel
 from sklearn import preprocessing
 
+
+
 sys.path.insert(0,'./src')
 import bridgeSampling as bs # it contains a method to estimate the marginal likelihood according to the Bridge Sampling approach
 import utilFunctions as ut          # it has different methods to handle and plot data
@@ -120,7 +122,7 @@ for k in [1,2,3]:
             print('Accuracy train: ', accTrain)
             print('F1 score Train: ', f1Train)
 
-            
+
             stop_post = timeit.default_timer()
             time_post = stop_post - start_post
             r = ut.get_z(dataTest, trace = trace, model=model, burn_in = 500)
