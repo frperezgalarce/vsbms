@@ -9,24 +9,24 @@ Original file is located at
 
 # %matplotlib inline
 import pandas as pd
-from sklearn.model_selection import train_test_split
+#from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score
-from sklearn.model_selection import LeaveOneOut
+#from sklearn.model_selection import LeaveOneOut
 from sklearn.ensemble import RandomForestClassifier
-import  sklearn.linear_model as linearModel
+#import  sklearn.linear_model as linearModel
 from sklearn.decomposition import PCA
-from sklearn import preprocessing
+#from sklearn import preprocessing
 import numpy as np
-import seaborn
+#import seaborn
 import matplotlib.pyplot as plt
 from warnings import filterwarnings
 filterwarnings('ignore')
-import timeit
+#import timeit
 import pymc3 as pm
-import matplotlib.lines as mlines
-from sklearn import svm
+#import matplotlib.lines as mlines
+#from sklearn import svm
 np.random.seed(1)
-from itertools import product, combinations
+#from itertools import product, combinations
 import sys
 
 sys.path.insert(0,'./src')

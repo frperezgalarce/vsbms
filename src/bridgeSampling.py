@@ -9,17 +9,17 @@ import numpy as np
 from warnings import filterwarnings, warn
 filterwarnings('ignore')
 from pymc3.theanof import set_tt_rng, MRG_RandomStreams
-import itertools
+#import itertools
 set_tt_rng(MRG_RandomStreams(42))
 from pymc3.model import modelcontext
 from scipy import dot
 from scipy.linalg import cholesky as chol
 import scipy.stats as st
-from tempfile import mkdtemp
+#from tempfile import mkdtemp
 #from pymc3.step_methods import smc
 from sklearn import preprocessing
-from pymc3.variational.callbacks import CheckParametersConvergence
-import timeit
+#from pymc3.variational.callbacks import CheckParametersConvergence
+#import timeit
 import sys
 from numpy import inf
 
