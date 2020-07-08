@@ -43,8 +43,8 @@ import samplebiasselection as sbs
 # In[3]:
 
 
-fileTrain = '/home/francisco/Escritorio/code/vsbms/data/BIASEDFATS/Train_rrlyr-1.csv'
-fileTest =  '/home/francisco/Escritorio/code/vsbms/data/BIASEDFATS/Test_rrlyr-1.csv'
+fileTrain = '/home/francisco/Escritorio/code/vsbms/data/BIASEDFATS/Train_rrlyr-3.csv'
+fileTest =  '/home/francisco/Escritorio/code/vsbms/data/BIASEDFATS/Test_rrlyr-3.csv'
 dataTrain = pd.read_csv(fileTrain)
 dataTest = pd.read_csv(fileTest)
 DataPriors = [dataTrain, dataTest]
@@ -223,7 +223,7 @@ for k in [1,2]:
             print('exporting model')
             res.append([k, Components, marginal_likelihood, size, informative, gelRub, accTrain, accTest,
             f1Train, f1Test])
-            pd.DataFrame(res).to_csv('Informative_rrlyr1-0707.csv')
+            pd.DataFrame(res).to_csv('Informative_rrlyr3-0707.csv')
             del dataTrain
             del dataTest
             print('___________________________________________________________________________')
