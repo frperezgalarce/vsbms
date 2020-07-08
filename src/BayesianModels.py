@@ -283,7 +283,7 @@ def fitBayesianModel(Bayesian_Model, yTrain, method = 1, n_ = 3000, MAP=True, ch
             step = pm.Metropolis()
             trace = pm.sample(n_ , step =step, chain= chains, njobs=jobs, callbacks=[CheckParametersConvergence()], tune =1000, step_size = 100)
             pm.traceplot(trace)
-            name = 'Results/plots/'+star+'_'+classifier+'_PCA_'+str(PCA)+'2.png'
+            name = 'plots/'+star+'_'+classifier+'_PCA_'+str(PCA)+'2.png'
             plt.savefig(name)
             plt.clf()
 

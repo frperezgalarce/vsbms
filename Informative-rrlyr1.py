@@ -43,8 +43,8 @@ import samplebiasselection as sbs
 # In[3]:
 
 
-fileTrain = 'data/BIASEDFATS/Train_rrlyr-1.csv'
-fileTest =  'data/BIASEDFATS/Test_rrlyr-1.csv'
+fileTrain = '/home/francisco/Escritorio/code/vsbms/data/BIASEDFATS/Train_rrlyr-1.csv'
+fileTest =  '/home/francisco/Escritorio/code/vsbms/data/BIASEDFATS/Test_rrlyr-1.csv'
 dataTrain = pd.read_csv(fileTrain)
 dataTest = pd.read_csv(fileTest)
 DataPriors = [dataTrain, dataTest]
@@ -94,8 +94,8 @@ DataPriors = pd.DataFrame(DataPriors, columns=names)
 
 informative = False
 Flat = False
-for k in [3]:
-    for Components in [12]:
+for k in [1,2,3]:
+    for Components in [2,4,6,8,10,12]:
 
         pca = PCA(n_components=Components)
         pca.fit(DataPriors)
@@ -108,7 +108,7 @@ for k in [3]:
         print(intercept)
         print(priors)
 
-        for size in[10000]:
+        for size in[1000]:
             for infor in [True]:
                 dataTrain = pd.read_csv(fileTrain)
                 dataTest = pd.read_csv(fileTest)
@@ -223,7 +223,7 @@ for k in [3]:
             print('exporting model')
             res.append([k, Components, marginal_likelihood, size, informative, gelRub, accTrain, accTest,
             f1Train, f1Test])
-            pd.DataFrame(res).to_csv('Results/summaryMCMC/'+'Informative_rrlyr1-0602.csv')
+            pd.DataFrame(res).to_csv('Informative_rrlyr1-0707.csv')
             del dataTrain
             del dataTest
             print('___________________________________________________________________________')
