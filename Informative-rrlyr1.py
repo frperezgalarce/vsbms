@@ -94,7 +94,7 @@ DataPriors = pd.DataFrame(DataPriors, columns=names)
 
 informative = False
 Flat = False
-for k in [1,2,3]:
+for k in [1,2]:
     for Components in [2,4,6,8,10,12]:
 
         pca = PCA(n_components=Components)
