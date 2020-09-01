@@ -2,21 +2,13 @@ import pandas as pd
 import bridgeSampling as bs
 import utilFunctions as ut
 import BayesianModels as bm
-#from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
-#from sklearn import preprocessing
-#from sklearn.calibration import calibration_curve
-#from sklearn.manifold import TSNE
 import numpy as np
 from sklearn.metrics import confusion_matrix, accuracy_score, f1_score
-#import seaborn
-import matplotlib.pyplot as plt
-#from itertools import cycle
-from warnings import filterwarnings
 from sklearn.model_selection import StratifiedKFold
 import timeit
 import pymc3 as pm
-import sys, os
+
 
 def runExperimentsBiased(ml = True, size = [100], components = [8], method = [7], classes = ['rrlyr'],
                     fit_iterations = 20000, id_col_= 'ID', name_class_col_= 'Class', biasedSplit = False, ModifiedPrior=False, alpha_ = 0.1,

@@ -3,13 +3,11 @@
 
 # In[ ]:
 
-#get_ipython().magic('matplotlib inline')
 import theano
 floatX = theano.config.floatX
 theano.config.floatX = 'float64'
 theano.config.compute_test_value ='raise'
 theano.config.exception_verbosity = 'high'
-
 import pymc3 as pm
 import theano.tensor as T
 import pandas as pd
@@ -17,22 +15,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from warnings import filterwarnings
 filterwarnings('ignore')
-#from sklearn import datasets
-from sklearn.preprocessing import scale
-from sklearn.model_selection import train_test_split
-#from sklearn.datasets import make_moons
 from sklearn.decomposition import PCA
 from pymc3.theanof import set_tt_rng, MRG_RandomStreams
-#from sklearn.metrics import confusion_matrix
-#import itertools
 set_tt_rng(MRG_RandomStreams(42))
-#from pymc3.model import modelcontext
-from scipy import dot
-from scipy.linalg import cholesky as chol
-import scipy.stats as st
-from scipy import optimize
-import warnings
-#from tempfile import mkdtemp
 from sklearn import preprocessing
 from pymc3.variational.callbacks import CheckParametersConvergence
 import timeit

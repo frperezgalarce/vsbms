@@ -1,51 +1,28 @@
 
 # coding: utf-8
-
-# In[ ]:
-
-#get_ipython().magic('matplotlib inline')
 import theano
 floatX = theano.config.floatX
-import pymc3 as pm
-import theano.tensor as T
 import pandas as pd
-#import sklearn
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from warnings import filterwarnings
 import  sklearn.linear_model as linearModel
 filterwarnings('ignore')
-#from sklearn import datasets
-from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
-#from sklearn.datasets import make_moons
 from sklearn.decomposition import PCA
 from pymc3.theanof import set_tt_rng, MRG_RandomStreams
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import confusion_matrix
 from sklearn.manifold import TSNE
 from sklearn.utils import resample
 import itertools
 set_tt_rng(MRG_RandomStreams(42))
-#from pymc3.model import modelcontext
-#from scipy import dot
-#from scipy import special
-#from scipy.linalg import cholesky as chol
 from itertools import cycle
-import scipy.stats as st
-import warnings
-#from tempfile import mkdtemp
 from sklearn import preprocessing
-#from pymc3.variational.callbacks import CheckParametersConvergence
-import timeit
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import confusion_matrix, accuracy_score, f1_score
-import sys
 
 def Initialize(survey = 'OGLE', sepColumns_=' ', sepHeader_= ' ', maxSample = 5000000):
     ' surveys : OGLE, GAIA, VVV, WISE '
-
     path = 'FATS/'
     if survey == 'OGLE':
         print('Running OGLE')
@@ -123,7 +100,7 @@ def kernelGaussiano(X, mean, sigma=1):
             col = col + 1
     return pd.DataFrame(phi)
 
-def Polinomial(X, p):
+def polynomial(X, p):
     phi = np.ones((X.shape[0],p*(X.shape[1])))
     col = 0
     X = (X-X.mean())/X.std()

@@ -10,21 +10,17 @@ from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 import  sklearn.linear_model as linearModel
 from sklearn import preprocessing
-from sklearn.manifold import TSNE
 import numpy as np
-#import seaborn
 import matplotlib.pyplot as plt
 from itertools import cycle
 from warnings import filterwarnings
 import timeit
 import pymc3 as pm
 import sys
-import json
 import seaborn as sns
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import confusion_matrix, accuracy_score, f1_score
 from sklearn.linear_model import LogisticRegression
-from sklearn.decomposition import PCA
 from sklearn.metrics.pairwise import polynomial_kernel
 from sklearn import preprocessing
 
