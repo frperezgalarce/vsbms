@@ -1,5 +1,4 @@
 import pandas as pd
-import timeit
 import pymc3 as pm
 import sys
 from sklearn.metrics import accuracy_score, f1_score
@@ -52,9 +51,8 @@ scaler = preprocessing.StandardScaler()
 DataPriors = scaler.fit_transform(DataPriors)
 DataPriors = pd.DataFrame(DataPriors, columns=names)
 
-Flat = False
 for k in [2]:
-    for Components in [10]:
+    for Components in [4]:
 
         pca = PCA(n_components=Components)
         pca.fit(DataPriors)
@@ -119,7 +117,6 @@ for k in [2]:
 
         priorsDict = {}
 
-        start_post = timeit.default_timer()
         with pm.Model() as model:
             priorsDict['Intercept'] = pm.Normal.dist(mu=intercept[0], sd=1)
             for j in range(len(List)):
@@ -135,8 +132,6 @@ for k in [2]:
         pm.traceplot(trace)
         print('plotting trace')
 
-        stop_post = timeit.default_timer()
-        time_post = stop_post - start_post
 
         r = ut.get_z(dataTrain, trace=trace, model=model, burn_in=500)
         predictions_1_Train = (ut.logistic_function_(r).mean(axis=1) > 0.5).astype(int)
@@ -156,12 +151,9 @@ for k in [2]:
         gelRub = pm.diagnostics.gelman_rubin(trace)
         print('gelRub: ', gelRub)
         try:
-            start_2 = timeit.default_timer()
             logml_dict = bs.Marginal_llk(trace, model=model, maxiter=100000)
             print('Estimated Marginal log-Likelihood %.5f' % (logml_dict['logml']))
             marginal_likelihood = logml_dict['logml']
-            stop_2 = timeit.default_timer()
-            time_ml = stop_2 - start_2
         except:
             print('marginal likelihood does not estimated')
             marginal_likelihood = 'Null'
