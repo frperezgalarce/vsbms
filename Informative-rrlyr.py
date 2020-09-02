@@ -129,9 +129,6 @@ for k in [2]:
                                                  jobs=1, chains=2, star='rrlyr', classifier='RL',
                                                  PCA=False)
         trace = trace[500:]
-        pm.traceplot(trace)
-        print('plotting trace')
-
 
         r = ut.get_z(dataTrain, trace=trace, model=model, burn_in=500)
         predictions_1_Train = (ut.logistic_function_(r).mean(axis=1) > 0.5).astype(int)
