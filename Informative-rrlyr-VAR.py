@@ -154,7 +154,7 @@ for k in [2]:
             f1Train = f1_score(yTrain, predictions_1_Train, pos_label=1)
 
             print('Accuracy train: ', accTrain)
-            print('f1 Train: ', f1Train)
+            print('f1 train: ', f1Train)
 
             r = ut.get_z(dataTest, trace=trace, model=model, burn_in=500)
             predictions_1_Test = (ut.logistic_function_(r).mean(axis=1) > 0.5).astype(int)
@@ -163,7 +163,7 @@ for k in [2]:
             f1Test = f1_score(yTest, predictions_1_Test, pos_label=1)
 
             print('Accuracy test: ', accTest)
-            print('F1 score Test: ', f1Test)
+            print('F1 score test: ', f1Test)
             gelRub = pm.diagnostics.gelman_rubin(trace)
             print('gelRub: ', gelRub)
             try:

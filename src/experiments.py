@@ -35,9 +35,9 @@ def runExperimentsBiased(ml = True, size = [100], components = [8], method = [7]
 
             dataTrain = dataTrain.sample(samples, random_state =0)
             print('after down_sampling: ')
-            '''print('Train: ')
+            '''print('train: ')
             print(data_train.label.value_counts())
-            print('Test: ')
+            print('test: ')
             print(data_test.label.value_counts())
             '''
         print('The dataset contains:', samples, 'samples')
@@ -143,14 +143,14 @@ def runExperimentsBiased(ml = True, size = [100], components = [8], method = [7]
             f1Train = f1_score(y_train, predictions_1_Train, pos_label = 1)
             cm = confusion_matrix(y_train, predictions_1_Train)
             print('Accuracy train: ', accTrain)
-            print('Accuracy f1 Train: ', f1Train)
+            print('Accuracy f1 train: ', f1Train)
             acc_kfold_Train.append(accTrain)
             f1_kfold_Train.append(f1Train)
 
         accTrain = np.mean(acc_kfold_Train)
         f1Train =np.mean(f1Train)
         print('Mean Accuracy train: ', accTrain)
-        print('Mean f1 Train: ', f1Train)
+        print('Mean f1 train: ', f1Train)
         stop_1 = timeit.default_timer()
         time_CV = stop_1 - start_1
 
@@ -175,7 +175,7 @@ def runExperimentsBiased(ml = True, size = [100], components = [8], method = [7]
         accTest = accuracy_score(yTest, predictions_1_Test, normalize=True)
         f1Test = f1_score(yTest, predictions_1_Test, pos_label = 1)
         print('Accuracy train: ', accTest)
-        print('Accuracy f1 Train: ', f1Test)
+        print('Accuracy f1 train: ', f1Test)
 
         gelRub = pm.diagnostics.gelman_rubin(trace)
         print('gelRub: ', gelRub)

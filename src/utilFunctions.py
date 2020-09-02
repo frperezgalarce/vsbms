@@ -18,11 +18,10 @@ set_tt_rng(MRG_RandomStreams(42))
 from itertools import cycle
 from sklearn import preprocessing
 from sklearn.model_selection import StratifiedKFold
-from sklearn.metrics import confusion_matrix, accuracy_score, f1_score
+from sklearn.metrics import accuracy_score, f1_score
 
 
 def initialize_data(survey='OGLE', sep_columns=' ', sep_header=' ', max_sample=5000000):
-    ' surveys : OGLE, GAIA, VVV, WISE '
     path = 'FATS/'
     if survey == 'OGLE':
         print('Running OGLE')
@@ -34,7 +33,8 @@ def initialize_data(survey='OGLE', sep_columns=' ', sep_header=' ', max_sample=5
 
     if survey == 'GAIA':
         print('Running GAIA')
-        data = read_file_fats(path + 'FATS_GAIA.dat', format_file='.dat', sep_columns=sep_columns, sep_header=sep_header)
+        data = read_file_fats(path + 'FATS_GAIA.dat', format_file='.dat', sep_columns=sep_columns,
+                              sep_header=sep_header)
         ID = 'ID'
         class_col = 'Class'
         classes = data.Class.unique()
@@ -55,7 +55,8 @@ def initialize_data(survey='OGLE', sep_columns=' ', sep_header=' ', max_sample=5
 
     if survey == 'WISE':
         print('Running WISE')
-        data = read_file_fats(path + 'FATS_WISE.dat', format_file='.dat', sep_columns=sep_columns, sep_header=sep_header)
+        data = read_file_fats(path + 'FATS_WISE.dat', format_file='.dat', sep_columns=sep_columns,
+                              sep_header=sep_header)
         ID = 'ID'
         class_col = 'Class'
         classes = data.Class.unique()
@@ -139,7 +140,7 @@ def plot_q(logml0):
 
 
 def surface_plot(X, Y, Z, **kwargs):
-    xlabel, ylabel, zlabel, title = kwargs.get('xlabel', ""), kwargs.get('ylabel', ""),\
+    xlabel, ylabel, zlabel, title = kwargs.get('xlabel', ""), kwargs.get('ylabel', ""), \
                                     kwargs.get('zlabel', ""), kwargs.get('title', "")
     fig = plt.figure(figsize=(12, 8))
     fig.patch.set_facecolor('white')
@@ -177,7 +178,7 @@ def get_z(data, trace, burn_in=1000):
     return r
 
 
-def plot_TSNE(data, labels, perplexity_=100, n_iter_=3000, verbose_=0):
+def plot_tsne(data, labels, perplexity_=100, n_iter_=3000, verbose_=0):
     n_sne = data.shape[0]
     np_scaled = preprocessing.normalize(data[0:n_sne])
     df_normalized = pd.DataFrame(np_scaled)
@@ -216,19 +217,16 @@ def down_sampling(df):
     return df_downsampled
 
 
-def dim_reduction(data, label, components, type_net='bernoulli'):
+def dim_reduction(data, label, components):
     pca = PCA(n_components=components)
     pca.fit(data)
     data = pca.transform(data)
     data = pd.DataFrame(data)
-
-    if type_net == 'categorical':
-        ym = label.as_matrix()
     if components == 0:
         fig, ax = plt.subplots()
         ax.scatter(data[label == 0, 0], data[label == 0, 1], label='Class 0')
         ax.scatter(data[label == 1, 0], data[label == 1, 1], color='r', label='Class 1')
-        ax.set(xlabel='X', ylabel='Y', title='Toy binary classification data set');
+        ax.set(xlabel='X', ylabel='Y', title='Toy binary classification data set')
         plt.show()
     return data, label
 
@@ -264,7 +262,7 @@ def define_train_set(data, name_class_col='Class', id_col='ID', plot=False,
         plt.show()
 
     if not biased_split:
-        print('Test size: ', int(data.shape[0] * test))
+        print('test size: ', int(data.shape[0] * test))
         data_train, data_test = train_test_split(data, test_size=test, random_state=42)
         label_train = data_train[name_class_col]
         label_test = data_test[name_class_col]
@@ -325,8 +323,7 @@ def read_file_fats(file, format_file='.dat', sep_columns=',', sep_header='\t'):
             print('Problems with file format.')
 
 
-def plot_confusion_matrix(cm, classes, type='train',
-                          normalize=False,
+def plot_confusion_matrix(cm, classes, normalize=False,
                           title='Confusion matrix',
                           cmap=plt.cm.Blues):
     """
@@ -378,7 +375,7 @@ def k_fold_log_reg(data_train, label_train, data_test, label_test, n_split_test,
 
     skf = StratifiedKFold(n_splits=int(n_split_test))
     clf.fit(data_train, label_train)
-
+    acc_kfold_test = []
     skf.get_n_splits(data_test, label_test)
     StratifiedKFold(n_splits=2, random_state=None, shuffle=False)
     for train_index, test_index in skf.split(data_test, label_test):
@@ -389,56 +386,56 @@ def k_fold_log_reg(data_train, label_train, data_test, label_test, n_split_test,
     return acc_kfold, acc_kfold_test
 
 
-def KFold(dataTrain, labelTrain, dataTest, labelTest, n_split_test, n_split_train, clf):
+def k_fold(data_train, label_train, data_test, label_test, n_split_test, n_split_train, clf):
     print('Training...')
     acc_kfold = []
-    acc_kfold_Test = []
-    f1_kfold_Train = []
-    f1_kfold_Test = []
+    acc_kfold_test = []
+    f1_kfold_train = []
+    f1_kfold_test = []
 
     skf = StratifiedKFold(n_splits=int(n_split_train))
-    skf.get_n_splits(dataTrain, labelTrain)
+    skf.get_n_splits(data_train, label_train)
 
-    for train_index, test_index in skf.split(dataTrain, labelTrain):
-        X_train, X_test = dataTrain.iloc[train_index, :], dataTrain.iloc[test_index, :]
-        y_train, y_test = labelTrain.iloc[train_index], labelTrain.iloc[test_index]
-        clf.fit(X_train, y_train)
-        prediction_freq = clf.predict(X_test)
+    for train_index, test_index in skf.split(data_train, label_train):
+        x_train, x_test = data_train.iloc[train_index, :], data_train.iloc[test_index, :]
+        y_train, y_test = label_train.iloc[train_index], label_train.iloc[test_index]
+        clf.fit(x_train, y_train)
+        prediction_freq = clf.predict(x_test)
         acc_kfold.append(accuracy_score(y_test, prediction_freq, normalize=True))
         print('Accuracy: ', accuracy_score(y_test, prediction_freq, normalize=True))
         print('F1-score: ', f1_score(y_test, prediction_freq, pos_label='class_a'))
-        f1_kfold_Train.append(f1_score(y_test, prediction_freq, pos_label='class_a'))
+        f1_kfold_train.append(f1_score(y_test, prediction_freq, pos_label='class_a'))
 
-    clf.fit(dataTrain, labelTrain)
+    clf.fit(data_train, label_train)
     print('Testing...')
 
     skf = StratifiedKFold(n_splits=int(n_split_test))
-    skf.get_n_splits(dataTest, labelTest)
+    skf.get_n_splits(data_test, label_test)
 
-    for train_index, test_index in skf.split(dataTest, labelTest):
-        X_train, X_test = dataTest.iloc[train_index, :], dataTest.iloc[test_index, :]
-        y_train, y_test = labelTest.iloc[train_index], labelTest.iloc[test_index]
-        prediction_freq = clf.predict(X_test)
+    for train_index, test_index in skf.split(data_test, label_test):
+        x_train, x_test = data_test.iloc[train_index, :], data_test.iloc[test_index, :]
+        y_train, y_test = label_test.iloc[train_index], label_test.iloc[test_index]
+        prediction_freq = clf.predict(x_test)
         print('Accuracy: ', accuracy_score(y_test, prediction_freq, normalize=True))
         print('F1-score: ', f1_score(y_test, prediction_freq, pos_label='class_a'))
-        acc_kfold_Test.append(accuracy_score(y_test, prediction_freq, normalize=True))
-        f1_kfold_Test.append(f1_score(y_test, prediction_freq, pos_label='class_a'))
-    return acc_kfold, acc_kfold_Test, f1_kfold_Train, f1_kfold_Test
+        acc_kfold_test.append(accuracy_score(y_test, prediction_freq, normalize=True))
+        f1_kfold_test.append(f1_score(y_test, prediction_freq, pos_label='class_a'))
+    return acc_kfold, acc_kfold_test, f1_kfold_train, f1_kfold_test
 
 
-def comparativePlotAcc(Test, Train, classStar='rrlyr', clf="Random Forest", normalized=True, num_bin=10, plType='acc',
-                       binslim=True):
-    if plType == 'acc':
-        bin_lims = np.linspace(np.min(Test), 1, num_bin + 1)
+def comparative_plot_acc(test, train, class_star='rrlyr', clf="Random Forest", normalized=True, num_bin=10,
+                         plt_type='acc', binslim=True):
+    if plt_type == 'acc':
+        bin_lims = np.linspace(np.min(test), 1, num_bin + 1)
         bin_centers = 0.5 * (bin_lims[:-1] + bin_lims[1:])
         bin_widths = bin_lims[1:] - bin_lims[:-1]
-        if binslim == True:
-            hist1, _ = np.histogram(np.asarray(Test), bins=bin_lims)
-            hist2, _ = np.histogram(np.asarray(Train), bins=bin_lims)
+        if binslim:
+            hist1, _ = np.histogram(np.asarray(test), bins=bin_lims)
+            hist2, _ = np.histogram(np.asarray(train), bins=bin_lims)
         else:
-            hist1, _ = np.histogram(np.asarray(Test))
-            hist2, _ = np.histogram(np.asarray(Train))
-        if normalized == True:
+            hist1, _ = np.histogram(np.asarray(test))
+            hist2, _ = np.histogram(np.asarray(train))
+        if normalized:
             hist1 = hist1 / np.max(hist1)
             hist2 = hist2 / np.max(hist2)
         fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
@@ -446,20 +443,21 @@ def comparativePlotAcc(Test, Train, classStar='rrlyr', clf="Random Forest", norm
         ax1.bar(bin_centers, hist2, width=bin_widths, align='center', alpha=0.4)
         ax2.set_title('Accuracy in Testing')
         ax1.set_title('Accuracy in Training')
-        plt.savefig('Results/plots/' + classStar + '_Experiment1_ACC_' + clf + '_' + '.png')
+        plt.savefig(class_star + '_Experiment1_ACC_' + clf + '_' + '.png')
         plt.clf()
-    if plType == 'f1':
-        bin_lims = np.linspace(np.min(Test), 1, num_bin + 1)
+
+    if plt_type == 'f1':
+        bin_lims = np.linspace(np.min(test), 1, num_bin + 1)
         bin_centers = 0.5 * (bin_lims[:-1] + bin_lims[1:])
         bin_widths = bin_lims[1:] - bin_lims[:-1]
-        ##computing the histograms
-        if binslim == True:
-            hist1, _ = np.histogram(np.asarray(Test), bins=bin_lims)
-            hist2, _ = np.histogram(np.asarray(Train), bins=bin_lims)
+
+        if binslim:
+            hist1, _ = np.histogram(np.asarray(test), bins=bin_lims)
+            hist2, _ = np.histogram(np.asarray(train), bins=bin_lims)
         else:
-            hist1, _ = np.histogram(np.asarray(Test))
-            hist2, _ = np.histogram(np.asarray(Train))  ##normalizing
-        if normalized == True:
+            hist1, _ = np.histogram(np.asarray(test))
+            hist2, _ = np.histogram(np.asarray(train))
+        if normalized:
             hist1 = hist1 / np.max(hist1)
             hist2 = hist2 / np.max(hist2)
         fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
@@ -467,19 +465,17 @@ def comparativePlotAcc(Test, Train, classStar='rrlyr', clf="Random Forest", norm
         ax1.bar(bin_centers, hist2, width=bin_widths, align='center', alpha=0.4)
         ax2.set_title('F1_score in Testing')
         ax1.set_title('F1_score in Training')
-        plt.savefig('Results/plots/' + classStar + '_Experiment1_F1_' + clf + '_' + '.png')
+        plt.savefig(class_star + '_Experiment1_F1_' + clf + '_' + '.png')
         plt.clf()
 
 
-def DataStructure(label, Data, components=10, typeNet='categorical', variable=0):
-    'This method defines '
-    if (typeNet == 'bernoulli'):
+def data_structure(label, data, components=10, type_net='categorical', variable=0):
+    if type_net == 'bernoulli':
         ym = pd.get_dummies(label)[variable]
-        Xm = preprocess(Data)
-        Xm, ym = dim_reduction(Xm, ym, components, type_net=typeNet)
+        xm = preprocess(data)
+        xm, ym = dim_reduction(xm, ym, components, type_net=type_net)
     else:
         ym = np.asanyarray(label)
-        Xm = preprocess(Data)
-        Xm, ym = dim_reduction(Xm, ym, components)
-
-    return Xm, ym
+        xm = preprocess(data)
+        xm, ym = dim_reduction(xm, ym, components)
+    return xm, ym
