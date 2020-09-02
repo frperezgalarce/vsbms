@@ -36,9 +36,9 @@ def runExperimentsBiased(ml = True, size = [100], components = [8], method = [7]
             dataTrain = dataTrain.sample(samples, random_state =0)
             print('after down_sampling: ')
             '''print('Train: ')
-            print(dataTrain.label.value_counts())
+            print(data_train.label.value_counts())
             print('Test: ')
-            print(dataTest.label.value_counts())
+            print(data_test.label.value_counts())
             '''
         print('The dataset contains:', samples, 'samples')
 

@@ -26,36 +26,36 @@ def initialize_data(survey='OGLE', sep_columns=' ', sep_header=' ', max_sample=5
     path = 'FATS/'
     if survey == 'OGLE':
         print('Running OGLE')
-        data = readFileFats(path + 'OGLE_FATS_12022019.csv', formatFile='.csv', sepColumns=sep_columns,
-                            sepHeader=sep_header)
+        data = read_file_fats(path + 'OGLE_FATS_12022019.csv', format_file='.csv', sep_columns=sep_columns,
+                              sep_header=sep_header)
         ID = 'ID'
         class_col = 'Class'
         classes = data.Class.unique()
 
     if survey == 'GAIA':
         print('Running GAIA')
-        data = readFileFats(path + 'FATS_GAIA.dat', formatFile='.dat', sepColumns=sep_columns, sepHeader=sep_header)
+        data = read_file_fats(path + 'FATS_GAIA.dat', format_file='.dat', sep_columns=sep_columns, sep_header=sep_header)
         ID = 'ID'
         class_col = 'Class'
         classes = data.Class.unique()
 
     if survey == 'MACHO':
         print('Running MACHO')
-        data = readFileFats(path + 'FATS_MACHO_lukas2.dat', sepColumns=sep_columns, sepHeader=sep_header)
+        data = read_file_fats(path + 'FATS_MACHO_lukas2.dat', sep_columns=sep_columns, sep_header=sep_header)
         ID = 'ID'
         class_col = 'Class'
         classes = data.Class.unique()
 
     if survey == 'VVV':
         print('Running VVV')
-        data = readFileFats(path + 'FATS_VVV.dat', formatFile='.dat', sepColumns=sep_columns, sepHeader=sep_header)
+        data = read_file_fats(path + 'FATS_VVV.dat', format_file='.dat', sep_columns=sep_columns, sep_header=sep_header)
         ID = 'ID'
         class_col = 'Class'
         classes = data.Class.unique()
 
     if survey == 'WISE':
         print('Running WISE')
-        data = readFileFats(path + 'FATS_WISE.dat', formatFile='.dat', sepColumns=sep_columns, sepHeader=sep_header)
+        data = read_file_fats(path + 'FATS_WISE.dat', format_file='.dat', sep_columns=sep_columns, sep_header=sep_header)
         ID = 'ID'
         class_col = 'Class'
         classes = data.Class.unique()
@@ -244,67 +244,61 @@ def delete_class(deleteclass, data, class_col):
     return data
 
 
-def jointComplementClasses(classA, Classes, Data, Class_col, label2):
+def joint_complement_classes(class_a, classes, data, class_col, label2):
     complement = []
-    for c in Classes:
-        if c not in classA:
+    for c in classes:
+        if c not in class_a:
             complement.append(c)
-    Data = joint_classes(complement, Data, Class_col, label2)
-    return Data
+    data = joint_classes(complement, data, class_col, label2)
+    return data
 
 
-def Define_TrainSet(Data, name_class_col='Class', id_col='ID', plot=False,
-                    test=0.2, biasedSplit=False, Features=10, classRef='RRLYR',
-                    class_2='RRLYR', alpha=0.1, DropEasy=False,
-                    oneToOne=True, PCA=True, **kwargs):
-    Data[name_class_col] = pd.Categorical(Data[name_class_col])
-    classes_Data = Data[name_class_col].unique()
-    print('Running Define TrainSet')
-    print(Data.shape)
+def define_train_set(data, name_class_col='Class', id_col='ID', plot=False,
+                     test=0.2, biased_split=False, **kwargs):
+    data[name_class_col] = pd.Categorical(data[name_class_col])
 
-    if (plot == True):
-        ym_ = Data.class_name
+    if plot:
+        ym_ = data.class_name
         plt.figure(figsize=(8, 8))
         plt.hist(ym_)
-        plt.title("Classes complete dataset")
         plt.show()
 
-    if biasedSplit == False:
-        print('Test size: ', int(Data.shape[0] * test))
-        Data_train, Data_test = train_test_split(Data, test_size=test, random_state=42)
-        label_train = Data_train[name_class_col]
-        label_test = Data_test[name_class_col]
-        del Data_train[id_col]
-        del Data_test[id_col]
-        del Data_train[name_class_col]
-        del Data_test[name_class_col]
-        print('Shape training: ', Data_train.shape)
-        print('Shape testing: ', Data_test.shape)
-        Data_train = Data_train.replace('\n', '', regex=True).replace('null', '0.0', regex=True).apply(pd.to_numeric,
+    if not biased_split:
+        print('Test size: ', int(data.shape[0] * test))
+        data_train, data_test = train_test_split(data, test_size=test, random_state=42)
+        label_train = data_train[name_class_col]
+        label_test = data_test[name_class_col]
+        del data_train[id_col]
+        del data_test[id_col]
+        del data_train[name_class_col]
+        del data_test[name_class_col]
+        print('Shape training: ', data_train.shape)
+        print('Shape testing: ', data_test.shape)
+        data_train = data_train.replace('\n', '', regex=True).replace('null', '0.0', regex=True).apply(pd.to_numeric,
                                                                                                        errors='ignore')
-        Data_test = Data_test.replace('\n', '', regex=True).replace('null', '0.0', regex=True).apply(pd.to_numeric,
+        data_test = data_test.replace('\n', '', regex=True).replace('null', '0.0', regex=True).apply(pd.to_numeric,
                                                                                                      errors='ignore')
-        return Data_train, Data_test, label_train, label_test
+        return data_train, data_test, label_train, label_test
     else:
-        trainFile = kwargs['trainFile']
-        testFile = kwargs['testFile']
-        Data_train = pd.read_csv(trainFile)
-        Data_test = pd.read_csv(testFile)
-        label_train = Data_train[name_class_col]
-        label_test = Data_test[name_class_col]
+        train_file = kwargs['train_file']
+        test_file = kwargs['test_file']
+        data_train = pd.read_csv(train_file)
+        data_test = pd.read_csv(test_file)
+        label_train = data_train[name_class_col]
+        label_test = data_test[name_class_col]
 
-        del Data_train[id_col]
-        del Data_test[id_col]
-        del Data_train[name_class_col]
-        del Data_test[name_class_col]
+        del data_train[id_col]
+        del data_test[id_col]
+        del data_train[name_class_col]
+        del data_test[name_class_col]
 
-    return Data_train, Data_test, label_train, label_test
+    return data_train, data_test, label_train, label_test
 
 
-def readFileFats(file, formatFile='.dat', sepColumns=',', sepHeader='\t'):
+def read_file_fats(file, format_file='.dat', sep_columns=',', sep_header='\t'):
     path = 'data/'
     file = path + file
-    if (formatFile == '.dat'):
+    if format_file == '.dat':
         file = open(file)
         lst = []
         columns = []
@@ -312,23 +306,21 @@ def readFileFats(file, formatFile='.dat', sepColumns=',', sepHeader='\t'):
         bad = 0
         for line in file:
             if count > 0:
-                # print(line.split(sepColumns))
-                if (len(line.split(sepColumns)) > len(columns[0])):
+                if len(line.split(sep_columns)) > len(columns[0]):
                     bad = bad + 1
                 else:
-                    lst.append(line.split(sepColumns))
+                    lst.append(line.split(sep_columns))
             else:
-                columns.append(line.split(sepHeader))
-                # print(line.split(sepHeader))
+                columns.append(line.split(sep_header))
             count = count + 1
         print(bad, 'lines fail when were reading')
-        Data = pd.DataFrame(lst, columns=columns[0])
-        return Data
+        data = pd.DataFrame(lst, columns=columns[0])
+        return data
     else:
-        if (formatFile == '.csv'):
+        if format_file == '.csv':
             print('Here')
-            Data = pd.read_csv(file)
-            return Data
+            data = pd.read_csv(file)
+            return data
         else:
             print('Problems with file format.')
 
@@ -369,32 +361,32 @@ def plot_confusion_matrix(cm, classes, type='train',
     plt.clf()
 
 
-def KFoldLogReg(dataTrain, labelTrain, dataTest, labelTest, n_split_test, n_split_train):
+def k_fold_log_reg(data_train, label_train, data_test, label_test, n_split_test, n_split_train):
     acc_kfold = []
     skf = StratifiedKFold(n_splits=int(n_split_train))
     clf = linearModel.LogisticRegression(C=1.0)
-    skf.get_n_splits(dataTrain, labelTrain)
+    skf.get_n_splits(data_train, label_train)
 
     StratifiedKFold(n_splits=2, random_state=None, shuffle=False)
-    for train_index, test_index in skf.split(dataTrain, labelTrain):
-        X_train, X_test = dataTrain.iloc[train_index, :], dataTrain.iloc[test_index, :]
-        y_train, y_test = labelTrain.iloc[train_index], labelTrain.iloc[test_index]
-        clf.fit(X_train, y_train)
-        prediction_freq = clf.predict(X_test)
+    for train_index, test_index in skf.split(data_train, label_train):
+        x_train, x_test = data_train.iloc[train_index, :], data_train.iloc[test_index, :]
+        y_train, y_test = label_train.iloc[train_index], label_train.iloc[test_index]
+        clf.fit(x_train, y_train)
+        prediction_freq = clf.predict(x_test)
         acc_kfold.append(accuracy_score(y_test, prediction_freq, normalize=True))
-        acc_kfold_Test = []
+        acc_kfold_test = []
 
     skf = StratifiedKFold(n_splits=int(n_split_test))
-    clf.fit(dataTrain, labelTrain)
+    clf.fit(data_train, label_train)
 
-    skf.get_n_splits(dataTest, labelTest)
+    skf.get_n_splits(data_test, label_test)
     StratifiedKFold(n_splits=2, random_state=None, shuffle=False)
-    for train_index, test_index in skf.split(dataTest, labelTest):
-        X_train, X_test = dataTest.iloc[train_index, :], dataTest.iloc[test_index, :]
-        y_train, y_test = labelTest.iloc[train_index], labelTest.iloc[test_index]
-        prediction_freq = clf.predict(X_test)
-        acc_kfold_Test.append(accuracy_score(y_test, prediction_freq, normalize=True))
-    return acc_kfold, acc_kfold_Test
+    for train_index, test_index in skf.split(data_test, label_test):
+        x_train, x_test = data_test.iloc[train_index, :], data_test.iloc[test_index, :]
+        y_train, y_test = label_test.iloc[train_index], label_test.iloc[test_index]
+        prediction_freq = clf.predict(x_test)
+        acc_kfold_test.append(accuracy_score(y_test, prediction_freq, normalize=True))
+    return acc_kfold, acc_kfold_test
 
 
 def KFold(dataTrain, labelTrain, dataTest, labelTest, n_split_test, n_split_train, clf):

@@ -18,7 +18,7 @@ for i in Classes:
         label1 = 'class_a'
         label2 = 'ClassB'
         Data = ut.joint_classes(classA, Data, Class_col, label1)
-        Data = ut.jointComplementClasses(classA, Classes, Data, Class_col, label2)
+        Data = ut.joint_complement_classes(classA, Classes, Data, Class_col, label2)
         print('Class A: obs: ', Data[Data[Class_col] == label1].count()[0])
         print('Class B: obs: ', Data[Data[Class_col] == label2].count()[0])
         kwargs = ut.read_kwargs('experimentParameters/globalVariables.txt')
