@@ -7,11 +7,11 @@ sys.path.insert(0, './src')
 import utilFunctions as ut
 import samplebiasselection as sbs
 
-Data, ID, Class_col, Classes = ut.Initialize(survey='OGLE')
+Data, ID, Class_col, Classes = ut.initialize_data(survey='OGLE')
 Classes = ['rrlyr']
 for i in Classes:
     if i != 'NonVar':
-        Data, ID, Class_col, Classes = ut.Initialize(survey='OGLE')
+        Data, ID, Class_col, Classes = ut.initialize_data(survey='OGLE')
         Data = Data[Data[Class_col] != 'NonVar']
         print(Data[Class_col].value_counts())
         classA = [i]

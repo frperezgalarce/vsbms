@@ -21,54 +21,52 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import confusion_matrix, accuracy_score, f1_score
 
 
-def Initialize(survey='OGLE', sepColumns_=' ', sepHeader_=' ', max_sample=5000000):
+def initialize_data(survey='OGLE', sep_columns=' ', sep_header=' ', max_sample=5000000):
     ' surveys : OGLE, GAIA, VVV, WISE '
     path = 'FATS/'
     if survey == 'OGLE':
         print('Running OGLE')
-        Data = readFileFats(path + 'OGLE_FATS_12022019.csv', formatFile='.csv', sepColumns=sepColumns_,
-                            sepHeader=sepHeader_)
+        data = readFileFats(path + 'OGLE_FATS_12022019.csv', formatFile='.csv', sepColumns=sep_columns,
+                            sepHeader=sep_header)
         ID = 'ID'
-        Class_col = 'Class'
-        Classes = Data.Class.unique()
+        class_col = 'Class'
+        classes = data.Class.unique()
 
     if survey == 'GAIA':
         print('Running GAIA')
-        Data = readFileFats(path + 'FATS_GAIA.dat', formatFile='.dat', sepColumns=sepColumns_, sepHeader=sepHeader_)
-        print(Data.head())
+        data = readFileFats(path + 'FATS_GAIA.dat', formatFile='.dat', sepColumns=sep_columns, sepHeader=sep_header)
         ID = 'ID'
-        Class_col = 'Class'
-        Classes = Data.Class.unique()
+        class_col = 'Class'
+        classes = data.Class.unique()
 
     if survey == 'MACHO':
         print('Running MACHO')
-        Data = readFileFats(path + 'FATS_MACHO_lukas2.dat', sepColumns=sepColumns_, sepHeader=sepHeader_)
-        # Data = readFileFats('FATS_OGLE.dat', formatFile ='.dat', sepColumns=',', sepHeader= ' ')
+        data = readFileFats(path + 'FATS_MACHO_lukas2.dat', sepColumns=sep_columns, sepHeader=sep_header)
         ID = 'ID'
-        Class_col = 'Class'
-        Classes = Data.Class.unique()
+        class_col = 'Class'
+        classes = data.Class.unique()
 
     if survey == 'VVV':
         print('Running VVV')
-        Data = readFileFats(path + 'FATS_VVV.dat', formatFile='.dat', sepColumns=sepColumns_, sepHeader=sepHeader_)
+        data = readFileFats(path + 'FATS_VVV.dat', formatFile='.dat', sepColumns=sep_columns, sepHeader=sep_header)
         ID = 'ID'
-        Class_col = 'Class'
-        Classes = Data.Class.unique()
+        class_col = 'Class'
+        classes = data.Class.unique()
 
     if survey == 'WISE':
         print('Running WISE')
-        Data = readFileFats(path + 'FATS_WISE.dat', formatFile='.dat', sepColumns=sepColumns_, sepHeader=sepHeader_)
+        data = readFileFats(path + 'FATS_WISE.dat', formatFile='.dat', sepColumns=sep_columns, sepHeader=sep_header)
         ID = 'ID'
-        Class_col = 'Class'
-        Classes = Data.Class.unique()
+        class_col = 'Class'
+        classes = data.Class.unique()
 
-    samples = Data.shape[0]
+    samples = data.shape[0]
     if samples > max_sample:
         samples = max_sample
     print('The dataset contains:', samples, 'samples')
-    Data = Data.sample(samples)
+    data = data.sample(samples)
 
-    return Data, ID, Class_col, Classes
+    return data, ID, class_col, classes
 
 
 def most_important_features(data, features):
@@ -150,13 +148,13 @@ def surface_plot(X, Y, Z, **kwargs):
     if bar == True:
         ax.bar(Y, -Z, zs=X, zdir='x')
     else:
-        mlMax = Z.max()
-        hiddenMax = Y.iloc[Z.idxmax()]
-        componentMax = X.iloc[Z.idxmax()]
+        ml_max = Z.max()
+        hidden_max = Y.iloc[Z.idxmax()]
+        component_max = X.iloc[Z.idxmax()]
         Y.drop(Z.idxmax())
         X.drop(Z.idxmax())
         Z.drop(Z.idxmax())
-        ax.scatter(componentMax, hiddenMax, mlMax, color='red', linewidth=5, marker='o')
+        ax.scatter(component_max, hidden_max, ml_max, color='red', linewidth=5, marker='o')
         ax.scatter(X, Y, Z, linewidth=3, marker='o')
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
@@ -179,9 +177,9 @@ def get_z(data, trace, burn_in=1000):
     return r
 
 
-def plot_TSNE(Data, labels, perplexity_=100, n_iter_=3000, verbose_=0):
-    n_sne = Data.shape[0]
-    np_scaled = preprocessing.normalize(Data[0:n_sne])
+def plot_TSNE(data, labels, perplexity_=100, n_iter_=3000, verbose_=0):
+    n_sne = data.shape[0]
+    np_scaled = preprocessing.normalize(data[0:n_sne])
     df_normalized = pd.DataFrame(np_scaled)
     tsne = TSNE(n_components=2, verbose=verbose_, perplexity=perplexity_, n_iter=n_iter_)
     tsne_results = tsne.fit_transform(df_normalized)
@@ -195,8 +193,8 @@ def plot_TSNE(Data, labels, perplexity_=100, n_iter_=3000, verbose_=0):
     df_tsne = pd.concat([df_tsne_1, df_tsne_2], axis=1, ignore_index=True)
     cycol = cycle('bgrcmk')
     for i in labels.unique():
-        data = df_tsne[df_tsne[0] == i]
-        plt.scatter(data[1], data[2], color=next(cycol), label=i)
+        data_mew = df_tsne[df_tsne[0] == i]
+        plt.scatter(data_mew[1], data_mew[2], color=next(cycol), label=i)
     plt.legend()
     plt.show()
 
