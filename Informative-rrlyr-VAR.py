@@ -21,10 +21,10 @@ dataTest = pd.read_csv(fileTest)
 
 DataPriors = [dataTrain, dataTest]
 DataPriors = pd.concat(DataPriors)
-lc_train = ut.downSampling(DataPriors)
+lc_train = ut.down_sampling(DataPriors)
 
 RelevantFeatures = ['Amplitude', 'PeriodLS', 'label']
-DataPriors = ut.MostImportanFeature(lc_train, RelevantFeatures)
+DataPriors = ut.most_important_features(lc_train, RelevantFeatures)
 DataPriors['newlabel'] = (DataPriors['Amplitude'] >= 0.2) & (DataPriors['Amplitude'] <= 0.8) & \
                          (DataPriors['PeriodLS'] >= 0.2) & (DataPriors['PeriodLS'] <= 1.0)
 
@@ -77,15 +77,15 @@ for k in [2]:
         for size in [10000]:
             dataTrain = pd.read_csv(fileTrain)
             dataTest = pd.read_csv(fileTest)
-            dataTrain = ut.downSampling(dataTrain)
+            dataTrain = ut.down_sampling(dataTrain)
             try:
                 dataTrain = dataTrain.sample(size, random_state=0)
             except:
                 print('sample bigger than data size')
-            yTrain = 1 * (dataTrain['label'] == 'ClassA')
+            yTrain = 1 * (dataTrain['label'] == 'class_a')
             del dataTrain['label']
 
-            yTest = 1 * (dataTest['label'] == 'ClassA')
+            yTest = 1 * (dataTest['label'] == 'class_a')
             del dataTest['label']
 
             try:
@@ -141,7 +141,7 @@ for k in [2]:
                 pm.glm.GLM.from_formula(function, dataTrain, priors=priorsDict,
                                         family=pm.glm.families.Binomial())
 
-            trace, model, map_ = bm.fitBayesianModel(model, yTrain=yTrain, method=7,
+            trace, model, map_ = bm.fitbayesianmodel(model, ytrain=yTrain, method=7,
                                                      n_=300000, MAP=False,
                                                      jobs=1, star='rrlyr', classifier='RL',
                                                      PCA=False)

@@ -20,16 +20,16 @@ for k in [2, 3]:
         for size in [500]:
             dataTrain = pd.read_csv(fileTrain)
             dataTest = pd.read_csv(fileTest)
-            dataTrain = ut.downSampling(dataTrain)
+            dataTrain = ut.down_sampling(dataTrain)
             try:
                 dataTrain = dataTrain.sample(size, random_state=0)
             except:
                 print('sample bigger than data size')
 
-            yTrain = 1 * (dataTrain['label'] == 'ClassA')
+            yTrain = 1 * (dataTrain['label'] == 'class_a')
 
             del dataTrain['label']
-            yTest = 1 * (dataTest['label'] == 'ClassA')
+            yTest = 1 * (dataTest['label'] == 'class_a')
             del dataTest['label']
 
             try:
@@ -74,7 +74,7 @@ for k in [2, 3]:
                     priorsDict[List[j]] = pm.Flat.dist()
                 pm.glm.GLM.from_formula(function, dataTrain, priors=priorsDict,
                                         family=pm.glm.families.Binomial())
-            trace, model, map_ = bm.fitBayesianModel(model, yTrain=yTrain, method=7,
+            trace, model, map_ = bm.fitbayesianmodel(model, ytrain=yTrain, method=7,
                                                      n_=20000, MAP=False,
                                                      jobs=1, star='rrlyr', classifier='RL',
                                                      PCA=False)

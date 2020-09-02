@@ -1,5 +1,4 @@
-import numpy as np,numpy.linalg
-
+import numpy as np
 def _getAplus(A):
     eigval, eigvec = np.linalg.eig(A)
     Q = np.matrix(eigvec)
