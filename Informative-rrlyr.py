@@ -130,14 +130,14 @@ for k in [2]:
                                                  PCA=False)
         trace = trace[500:]
 
-        r = ut.get_z(dataTrain, trace=trace, model=model, burn_in=500)
+        r = ut.get_z(dataTrain, trace=trace, burn_in=500)
         predictions_1_Train = (ut.logistic_function_(r).mean(axis=1) > 0.5).astype(int)
         accTrain = accuracy_score(yTrain, predictions_1_Train, normalize=True)
         f1Train = f1_score(yTrain, predictions_1_Train, pos_label=1)
         print('Accuracy train: ', accTrain)
         print('Accuracy f1 train: ', f1Train)
 
-        r = ut.get_z(dataTest, trace=trace, model=model, burn_in=500)
+        r = ut.get_z(dataTest, trace=trace, burn_in=500)
         predictions_1_Test = (ut.logistic_function_(r).mean(axis=1) > 0.5).astype(int)
 
         accTest = accuracy_score(yTest, predictions_1_Test, normalize=True)
