@@ -11,8 +11,8 @@ import bridgeSampling as bs
 import utilFunctions as ut
 import BayesianModels as bm
 
-fileTrain = '/home/franciscoperez/Documents/GitHub/data/BIASEDFATS/Train_rrlyr-1.csv'
-fileTest = '/home/franciscoperez/Documents/GitHub/data/BIASEDFATS/Test_rrlyr-1.csv'
+fileTrain = '/home/franciscoperez/Documents/GitHub/vsbms/data/BIASEDFATS/Train_rrlyr-1.csv'
+fileTest = '/home/franciscoperez/Documents/GitHub/vsbms/data/BIASEDFATS/Test_rrlyr-1.csv'
 
 res = []
 for k in [2, 3]:
@@ -26,10 +26,10 @@ for k in [2, 3]:
             except:
                 print('sample bigger than data size')
 
-            yTrain = 1 * (dataTrain['label'] == 'class_a')
+            yTrain = 1 * (dataTrain['label'] == 'ClassA')
 
             del dataTrain['label']
-            yTest = 1 * (dataTest['label'] == 'class_a')
+            yTest = 1 * (dataTest['label'] == 'ClassA')
             del dataTest['label']
 
             try:
@@ -45,6 +45,7 @@ for k in [2, 3]:
 
             names = dataTrain.columns
             scaler = preprocessing.StandardScaler()
+	        print(dataTrain.shape)
             dataTrain = scaler.fit_transform(dataTrain)
             dataTrain = pd.DataFrame(dataTrain, columns=names)
             pca = PCA(n_components=Components)

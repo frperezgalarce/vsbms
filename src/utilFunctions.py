@@ -201,7 +201,7 @@ def plot_tsne(data, labels, perplexity_=100, n_iter_=3000, verbose_=0):
 
 
 def down_sampling(df):
-    df_a = df[df.label == 'class_a']
+    df_a = df[df.label == 'ClassA']
     df_b = df[df.label == 'ClassB']
 
     if df_a.shape[0] > df_b.shape[0]:

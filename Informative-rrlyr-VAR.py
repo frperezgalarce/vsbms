@@ -13,8 +13,8 @@ import bridgeSampling as bs
 import utilFunctions as ut
 import BayesianModels as bm
 
-fileTrain = '/home/franciscoperez/Documents/GitHub/data/BIASEDFATS/Train_rrlyr-1.csv'
-fileTest = '/home/franciscoperez/Documents/GitHub/data/BIASEDFATS/Test_rrlyr-1.csv'
+fileTrain = '/home/franciscoperez/Documents/GitHub/data/BIASEDFATS/Train_rrlyr-3.csv'
+fileTest = '/home/franciscoperez/Documents/GitHub/data/BIASEDFATS/Test_rrlyr-3.csv'
 
 dataTrain = pd.read_csv(fileTrain)
 dataTest = pd.read_csv(fileTest)
@@ -57,8 +57,8 @@ DataPriors = scaler.fit_transform(DataPriors)
 DataPriors = pd.DataFrame(DataPriors, columns=names)
 
 Flat = False
-for k in [2]:
-    for Components in [2, 4]:
+for k in [1,2]:
+    for Components in [2, 4,6,8,10,12]:
         pca = PCA(n_components=Components)
         pca.fit(DataPriors)
         XPrior = pca.transform(DataPriors)
@@ -68,24 +68,33 @@ for k in [2]:
         intercept = clf.intercept_
         priors = clf.coef_[0]
 
+        #print(priors)
         predProbs = clf.predict_proba(XPrior)
         X_design = np.hstack([np.ones((XPrior.shape[0], 1)), XPrior])
         V = np.diagflat(np.product(predProbs, axis=1))
         covLogit = np.linalg.inv(np.dot(np.dot(X_design.T, V), X_design))
         sdLogit = np.sqrt(np.diag(covLogit))
-
-        for size in [10000]:
+        #print(dataTrain['label'])
+        for size in [1000]:
             dataTrain = pd.read_csv(fileTrain)
             dataTest = pd.read_csv(fileTest)
+
+
+
             dataTrain = ut.down_sampling(dataTrain)
             try:
                 dataTrain = dataTrain.sample(size, random_state=0)
             except:
                 print('sample bigger than data size')
-            yTrain = 1 * (dataTrain['label'] == 'class_a')
+
+            print('Train shape: ')
+            print(dataTrain.shape)
+            print('Test shape: ')
+            print(dataTest.shape)
+            yTrain = 1 * (dataTrain['label'] == 'ClassA')
             del dataTrain['label']
 
-            yTest = 1 * (dataTest['label'] == 'class_a')
+            yTest = 1 * (dataTest['label'] == 'ClassA')
             del dataTest['label']
 
             try:
@@ -99,9 +108,11 @@ for k in [2]:
 
             except:
                 print('---')
-
+            print(dataTrain.shape)
             names = dataTrain.columns
+            print(names)
             scaler = preprocessing.StandardScaler()
+            print(dataTrain.shape)
             dataTrain = scaler.fit_transform(dataTrain)
             dataTrain = pd.DataFrame(dataTrain, columns=names)
             pca = PCA(n_components=Components)

@@ -71,10 +71,10 @@ for k in [2]:
                 dataTrain = dataTrain.sample(size, random_state=0)
             except:
                 print('sample bigger than data size')
-            yTrain = 1 * (dataTrain['label'] == 'class_a')
+            yTrain = 1 * (dataTrain['label'] == 'ClassA')
             del dataTrain['label']
 
-            yTest = 1 * (dataTest['label'] == 'class_a')
+            yTest = 1 * (dataTest['label'] == 'ClassA')
             del dataTest['label']
 
         try:
