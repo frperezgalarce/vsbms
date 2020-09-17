@@ -19,6 +19,10 @@ fileTest = '/home/franciscoperez/Documents/GitHub/data/BIASEDFATS/Test_rrlyr-3.c
 dataTrain = pd.read_csv(fileTrain)
 dataTest = pd.read_csv(fileTest)
 
+print(dataTrain.shape)
+print(dataTest.shape)
+
+
 DataPriors = [dataTrain, dataTest]
 DataPriors = pd.concat(DataPriors)
 lc_train = ut.down_sampling(DataPriors)
