@@ -79,7 +79,7 @@ for k in [1,2]:
         covLogit = np.linalg.inv(np.dot(np.dot(X_design.T, V), X_design))
         sdLogit = np.sqrt(np.diag(covLogit))
         #print(dataTrain['label'])
-        for size in [1000]:
+        for size in [2000, 4000]:
             dataTrain = pd.read_csv(fileTrain)
             dataTest = pd.read_csv(fileTest)
 
@@ -190,7 +190,7 @@ for k in [1,2]:
                 marginal_likelihood = 'Null'
             res.append([k, Components, marginal_likelihood, size, gelRub, accTrain, accTest,
                         f1Train, f1Test])
-            pd.DataFrame(res).to_csv('Informative_rrlyr-VAR1-0702.csv')
+            pd.DataFrame(res).to_csv('Informative_rrlyr-VAR1-1709202.csv')
             del dataTrain
             del dataTest
             print('___________________________________________________________________________')
