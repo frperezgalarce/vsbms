@@ -6,7 +6,7 @@ Machine learning has achieved an important role in the automatic classification 
 
 # Visual abstract
 
-![myimage-alt-tag](https://github.com/vsbms/images/newdiagram2.png)
+![myimage-alt-tag](https://github.com/frperezgalarce/vsbms/blob/master/images/newdiagram2.png)
 
 # Requirements
  
